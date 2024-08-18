@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mingchao_boot.Mapper.getDataMapper">
+
+    <select id="getSkillTableData" resultType="com.example.mingchao_boot.Pojo.Skill">
+        select * from skilldata where role = #{character} and skill = #{skill}
+    </select>
+    <select id="getCharacterBasicData" resultType="com.example.mingchao_boot.Pojo.BasicData">
+        select * from `character` where name = #{characterName}
+    </select>
+    <select id="getRoleAttribute" resultType="com.example.mingchao_boot.Pojo.RoleAttribute">
+        select * from attribute where characterName = #{characterName}
+    </select>
+    <select id="getBreakthroughMaterialList" resultType="com.example.mingchao_boot.Pojo.BreakthroughMaterial">
+        select * from breakthroughmeterial
+            left join material on breakthroughmeterial.material = material.materialName
+            where breakthroughMaterialId = #{Id}
+    </select>
+    <select id="getSkills" resultType="com.example.mingchao_boot.Pojo.RoleSkills">
+        select * from skill where roleName = #{characterName}
+    </select>
+    <select id="getSkillDescribeList" resultType="com.example.mingchao_boot.Pojo.SkillDescribe">
+        select * from skilldescribe where `describe` = #{describe}
+    </select>
+    <select id="getSkillText" resultType="com.example.mingchao_boot.Pojo.Info">
+        select * from skilltext where skillid = #{id}
+    </select>
+    <select id="getSkillBreakthroughMaterialList"
+            resultType="com.example.mingchao_boot.Pojo.BreakthroughMaterial">
+        SELECT * FROM `skillbreakthroughmaterial` right JOIN breakthroughmeterial on `skillbreakthroughmaterial`.id = breakthroughmeterial.breakthroughMaterialId left JOIN material on breakthroughmeterial.material = material.materialName
+        where skilldescribe = #{skill} AND level = #{level}
+    </select>
+    <select id="getResonanceChain" resultType="com.example.mingchao_boot.Pojo.ResonanceChain">
+        select * from resonanceChain where `role` = #{characterName}
+    </select>
+    <select id="getResonanceChainDescribe" resultType="com.example.mingchao_boot.Pojo.ResonanceChainDescribe">
+        select * from resonancechaintext where resonanceChainId = #{id}
+    </select>
+    <select id="getWeaponRecommend" resultType="com.example.mingchao_boot.Pojo.WeaponRecommend">
+        select * from weaponrecommend left join weapon on weapon.weaponName = weaponrecommend.weapon
+        where weaponrecommend.role = #{characterName}
+    </select>
+    <select id="getWeaponEffectInfo" resultType="com.example.mingchao_boot.Pojo.Info">
+        select * from weaponeffect where weaponeffect = #{effect}
+    </select>
+    <select id="getAsPackageRecommend" resultType="com.example.mingchao_boot.Pojo.AsPackageRecommend">
+        select * from asrecommend where role = #{characterName}
+    </select>
+    <select id="getAcousticSkeleton" resultType="com.example.mingchao_boot.Pojo.AcousticSkeleton">
+        select * from acousticskeleton where asName = #{acousticSkeleton}
+    </select>
+    <select id="getAsDescribe" resultType="com.example.mingchao_boot.Pojo.Info">
+        select * from aseffect where effectName = #{acousticSkeleton}
+    </select>
+    <select id="getAsPackage" resultType="com.example.mingchao_boot.Pojo.AsPackage">
+        select * from aspackage where package = #{packageName}
+    </select>
+    <select id="getTeam" resultType="com.example.mingchao_boot.Pojo.Team">
+        select * from team where mainC = #{characterName}
+    </select>
+    <select id="getGmSkill" resultType="com.example.mingchao_boot.Pojo.GmSkill">
+        select * from gmskill where skillName = #{skillName}
+    </select>
+    <select id="getSkillRecommend" resultType="com.example.mingchao_boot.Pojo.SkillList">
+        select * from skillrecommend
+    </select>
+    <select id="getSkillDamageTypeInfo" resultType="com.example.mingchao_boot.model.SkillTestInfo">
+        select * from skilldamage where rolename = #{roleName}
+    </select>
+    <select id="getWeightList" resultType="com.example.mingchao_boot.model.AttributeWeight">
+        select * from entryweight where rolename = #{roleName}
+    </select>
+    <select id="getSkillBranchs" resultType="com.example.mingchao_boot.model.SkillBranch">
+        select * from skillbranch where name = #{skill} group by flag order by flag desc
+    </select>
+    <select id="getRoleImage" resultType="java.lang.String">
+        select bigImg from `character` where name = #{roleName}
+    </select>
+    <select id="getWeaponImage" resultType="java.lang.String">
+        select weaponImage from weapon where weaponName = #{weaponName}
+    </select>
+</mapper>

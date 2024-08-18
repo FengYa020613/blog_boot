@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mingchao_boot.Mapper.getSoundBonesDataMapper">
+    <insert id="addSoundBone" useGeneratedKeys="true" keyProperty="id">
+        insert into soundbonesstorage(userId, packageType, image, name, cost, level, mainCt, mainCtValue, gdCt, gdCtValue)
+        values (#{userId},#{packageType},#{image},#{name},#{COST},#{level},#{mainCt},#{mainCtValue},#{gdCt},#{gdCtValue})
+    </insert>
+    <insert id="addAttribute">
+        insert into storage(attributeId, type, value) values (#{attributeId},#{type},#{value})
+    </insert>
+    <select id="getSoundBonesList" resultType="com.example.mingchao_boot.Pojo.AcousticSkeleton">
+        select * from acousticskeleton where 1 = 1
+        <if test="level!='' and level!='全部'">
+            and level = #{level}
+        </if>
+        <if test="suit!='' and suit!='全部'">
+            and packageName = #{suit}
+        </if>
+        <if test="cost!='' and cost!=0">
+            and cost = #{cost}
+        </if>
+    </select>
+    <select id="getMySoundBones" resultType="com.example.mingchao_boot.model.SoundBonesData">
+        select * from soundbonesstorage where userId = #{userId}
+    </select>
+    <select id="getAttributes" resultType="com.example.mingchao_boot.model.SoundBonesAttribute">
+        select * from storage where attributeId = #{id}
+    </select>
+</mapper>

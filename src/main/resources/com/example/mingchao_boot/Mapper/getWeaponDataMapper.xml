@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mingchao_boot.Mapper.getWeaponDataMapper">
+    <select id="getWeaponList" resultType="com.example.mingchao_boot.Pojo.Weapon">
+        select * from weapon where 1=1
+         <if test="type!=null and type!='' and type!='全部'">
+             and type = #{type}
+         </if>
+        <if test="mainCt!='全部' and mainCt!=''">
+            and mainCt = #{mainCt}
+        </if>
+        <if test="star!=0">
+            and star = #{star}
+        </if>
+    </select>
+    <select id="getWeaponInfo" resultType="com.example.mingchao_boot.Pojo.WeaponInfo">
+        select * from weapon where weaponName = #{weaponName}
+    </select>
+    <select id="getWeaponAttributes" resultType="com.example.mingchao_boot.Pojo.WeaponAttribute">
+        select * from weaponattribute where weapon = #{weaponName}
+    </select>
+    <select id="getWeaponBreakthroughMaterials"
+            resultType="com.example.mingchao_boot.Pojo.BreakthroughMaterial">
+        select * from breakthroughmeterial left join material
+                 on breakthroughmeterial.material = material.materialName
+                 where breakthroughMaterialId = #{id}
+    </select>
+    <select id="getWeapon" resultType="com.example.mingchao_boot.Pojo.Weapon">
+        select * from weapon where weaponName = #{weaponName}
+    </select>
+    <select id="getWeaponIp" resultType="com.example.mingchao_boot.model.WeaponIp">
+        select * from weaponip where weaponName = #{weaponName}
+    </select>
+</mapper>

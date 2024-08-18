@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mingchao_boot.Mapper.articleMapper">
+    <insert id="SendArticle">
+        insert into article(maintitle, title, content, authorid, time, tag, module,`describe`,images)
+        VALUES (#{mainTitle},#{title},#{content},#{authorId},#{time},#{tag},#{module},#{describe},#{images})
+    </insert>
+    <insert id="SendAssess">
+        insert into assess(articleId, content, userid, time,assessId,deep,answerUserId)
+        values (#{articleId},#{content},#{userId},#{time},#{assessId},#{deep},#{answerUserId})
+    </insert>
+    <insert id="collection">
+        insert into collection values (#{userId},#{articleId})
+    </insert>
+    <insert id="addAttention">
+        insert into attention values (#{tUid},#{uid})
+    </insert>
+    <update id="setAssessLikeNum">
+        update assess set lnum = lnum + #{num} where id = #{id}
+    </update>
+    <update id="setArticleLikeNum">
+        update article set lnum = lnum + #{num} where id = #{id}
+    </update>
+    <update id="updateAssessNum">
+        update article set cnum = cnum + #{num} where id = #{articleId}
+    </update>
+    <update id="setState">
+        update article set state = #{state} where id = #{articleId}
+    </update>
+    <update id="setPublicState">
+        update article set publicState = #{state} where id = #{articleId}
+    </update>
+    <delete id="cancelCollection">
+        delete from collection where articleId = #{articleId} and userId = #{userId}
+    </delete>
+    <delete id="delAttention">
+        delete from attention where userId = #{tUid} and targetId = #{uid}
+    </delete>
+    <delete id="deleteAssess">
+        delete from assess where id = #{assessId}
+    </delete>
+    <delete id="deleteArticle">
+        delete from article where id = #{articleId}
+    </delete>
+    <select id="getAllArticles" resultType="com.example.mingchao_boot.model.article.Article">
+        select article.id,authorid,time,maintitle,`describe`,images,module,title,user.nickName,user.avatar,tag,lnum,cnum,article.state
+        from article left join user on article.authorid=user.userId
+        where article.state > 0 and publicState = 1
+        <if test="module!=-1">
+            and article.module=#{module}
+        </if>
+        order by time desc
+    </select>
+    <select id="getStrategy" resultType="com.example.mingchao_boot.model.article.Article">
+        select article.id,authorid,time,maintitle,content,images,title,module,user.nickName,user.avatar,tag,lnum,cnum,
+               article.state,article.publicState
+        from article left join user on article.authorid=user.userId
+        where id = #{id}
+    </select>
+    <select id="getAssess" resultType="com.example.mingchao_boot.model.article.Assess">
+        select id, articleId, answerUserId, content, assess.userid, time,
+               cnum, lnum, assessId, deep,u2.nickName as nickname,u2.avatar as avatar,
+               u.nickName as answerNickname, u.avatar as answerAvatar from assess left join user u on assess.answerUserId = u.userId
+            left join user u2 on u2.userId = assess.userid
+        where articleId = #{arid} and deep = #{deep}
+    </select>
+    <select id="getSearchList" resultType="com.example.mingchao_boot.model.article.Article">
+        select article.authorid,article.id,authorid,time,maintitle,`describe`,images,title,user.nickName,user.avatar,tag,lnum,cnum
+        from article left join user on article.authorid=user.userId
+        where article.publicState > 0 and article.state > 0
+        and (article.maintitle like concat('%',#{keyword},'%')
+        or article.tag like concat('%',#{keyword},'%'))
+    </select>
+    <select id="getMyCollection" resultType="com.example.mingchao_boot.model.article.Article">
+        select article.id,article.cnum,article.lnum,avatar,nickName,time,tag,article.`describe`,
+               article.images,article.maintitle,article.title,article.authorid
+        from collection left join article on collection.articleId = article.id
+            left join user on article.authorid = user.userId where collection.userId = #{userId}
+    </select>
+    <select id="getMyArticle" resultType="com.example.mingchao_boot.model.article.Article">
+        select article.authorid,article.id,authorid,time,maintitle,`describe`,images,title,user.nickName,
+               user.avatar,tag,lnum,cnum,article.state,article.publicState
+        from article left join user on article.authorid=user.userId where article.authorid = #{userId}
+    </select>
+    <select id="getCommentNum" resultType="java.lang.Integer">
+        select sum(cnum) from article where authorid = #{userId}
+    </select>
+    <select id="getLikeNum" resultType="java.lang.Integer">
+        select sum(lnum) from article where authorid = #{userId}
+    </select>
+    <select id="checkCollect" resultType="java.lang.Integer">
+        select count(*) from collection where userId = #{userId} and articleId = #{articleId}
+    </select>
+    <select id="getCollectNum" resultType="java.lang.Integer">
+        select count(*) from collection where articleId = #{articleId}
+    </select>
+    <select id="checkAttention" resultType="java.lang.Integer">
+        select count(*) from attention where userId = #{user1} and targetId = #{user2}
+    </select>
+    <select id="getUserAttention" resultType="java.lang.Integer">
+        select count(*) from attention where userId = #{userId}
+    </select>
+    <select id="getUserFans" resultType="java.lang.Integer">
+        select count(*) from attention where targetId = #{userId}
+    </select>
+    <select id="getMyAssess" resultType="com.example.mingchao_boot.model.article.Assess">
+        select id, articleId, answerUserId, content, assess.userid, time,
+               cnum, lnum, assessId, deep,u2.nickName as nickname,u2.avatar as avatar,
+               u.nickName as answerNickname, u.avatar as answerAvatar from assess
+               left join user u on assess.answerUserId = u.userId
+               left join user u2 on u2.userId = assess.userid
+        where assess.userid = #{userId}
+    </select>
+    <select id="getArticles" resultType="com.example.mingchao_boot.model.article.Article">
+        select article.*,user.nickName,user.avatar from article
+        left join user on article.authorid = user.userId where true
+        <if test="moduleInt!=-1">and module = #{moduleInt}</if>
+        <if test="statusInt!=-2">and article.state = #{statusInt}</if>
+        <if test="keyword!=''">and maintitle like concat('%',#{keyword},'%')</if>
+        limit #{page},#{pageSize}
+    </select>
+    <select id="getArticleNum" resultType="java.lang.Integer">
+        select count(*) from article where true
+        <if test="moduleInt!=-1">
+            and module = #{moduleInt}
+        </if>
+        <if test="keyword!=''">
+            and maintitle like concat('%',#{keyword},'%')
+        </if>
+    </select>
+    <select id="getAssesses" resultType="com.example.mingchao_boot.model.article.Assess">
+        select * from assess limit #{page},#{pageSize}
+    </select>
+    <select id="getAssessNum" resultType="java.lang.Integer">
+        select count(*) from assess
+    </select>
+    <select id="getAssessById" resultType="com.example.mingchao_boot.model.article.Assess">
+        select * from assess where id = #{assessId}
+    </select>
+    <select id="getArticleById" resultType="com.example.mingchao_boot.model.article.Article">
+        select * from article where id = #{articleId}
+    </select>
+    <select id="getUserArticle" resultType="com.example.mingchao_boot.model.article.Article">
+        select article.authorid,article.id,authorid,time,maintitle,`describe`,images,title,user.nickName,user.avatar,tag,lnum,cnum
+        from article left join user on article.authorid=user.userId
+        where article.authorid = #{userId} and article.state > 0 and article.publicState > 0
+    </select>
+    <select id="getCollection" resultType="java.lang.Integer">
+        select count(*) from collection where userId = #{uid} and articleId = #{arid}
+    </select>
+    <select id="findAttention" resultType="java.lang.Integer">
+        select count(*) from attention where userId = #{tUid} and targetId = #{uid}
+    </select>
+</mapper>

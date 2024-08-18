@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mingchao_boot.Mapper.userMapper">
+    <insert id="addUser">
+        insert into user(phone,nickName) values (#{phone},#{nickName})
+    </insert>
+    <update id="changePhone">
+        update user set phone = #{phone} where userId = #{userId}
+    </update>
+    <update id="incrArticleNum">
+        update user set articleNum = articleNum + 1 where userId = #{authorId}
+    </update>
+    <update id="saveUser">
+        update user set nickName = #{nickName},signature = #{signature},sex = #{sex},avatar = #{avatar}
+        where userId = #{userId}
+    </update>
+    <update id="updateUserSetting">
+        update user set showCollection = #{showCollection},showFans = #{showFans},showAttention = #{showAttention}
+        where userId = #{userId}
+    </update>
+    <update id="decrArticleNum">
+        update user set articleNum = articleNum - 1 where userId = #{userId}
+    </update>
+    <delete id="deleteUser">
+        delete from user where userId = #{userId}
+    </delete>
+    <select id="getUser" resultType="com.example.mingchao_boot.model.User">
+        select * from user where phone = #{phone}
+    </select>
+    <select id="getUserById" resultType="com.example.mingchao_boot.model.User">
+        select * from user where userId = #{userId}
+    </select>
+    <select id="getAttention" resultType="com.example.mingchao_boot.model.User">
+        select u.userId,u.avatar,u.nickName,u.articleNum
+        from attention left join user u on attention.targetId = u.userId
+        where attention.userId = #{uid} limit 0,50
+    </select>
+    <select id="getFans" resultType="com.example.mingchao_boot.model.User">
+        select u.userId,u.avatar,u.nickName,u.articleNum
+        from attention left join user u on attention.userId = u.userId
+        where attention.targetId = #{uid} limit 0,50
+    </select>
+    <select id="getUserSetting" resultType="com.example.mingchao_boot.model.UserSetting">
+        select showAttention,showFans,showCollection from user where userId = #{userId}
+    </select>
+    <select id="getUserList" resultType="com.example.mingchao_boot.model.User">
+        select * from user where true
+        <if test="type=='用户ID'">
+           and userId like concat('%',#{keyword},'%')
+        </if>
+        <if test="type=='性别'">
+           and sex = #{keyword}
+        </if>
+        <if test="type=='昵称'">
+           and nickName like concat('%',#{keyword},'%')
+        </if>
+        <if test="type=='手机号'">
+           and phone like concat('%',#{keyword},'%')
+        </if>
+        <if test="type=='个性签名'">
+           and signature like concat('%',#{keyword},'%')
+        </if>
+        limit #{page},#{pageSize}
+    </select>
+    <select id="getUserNum" resultType="java.lang.Integer">
+        select count(*) from user
+    </select>
+    <select id="getAdmin" resultType="com.example.mingchao_boot.model.Admin">
+        select * from admin where userName = #{username}
+    </select>
+    <select id="findAttention" resultType="java.lang.Integer">
+        select count(*) from attention where userId = #{userId} and targetId = #{uid}
+    </select>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mingchao_boot.Mapper.getRoleDataMapper">
+    <select id="getRoleList" resultType="com.example.mingchao_boot.Pojo.Role">
+        select name,bigImg,star,type from `character` where 1=1
+        <if test="rarity!=0">
+            and star = #{rarity}
+        </if>
+        <if test="type!='' and type!='全部'">
+            and type = #{type}
+        </if>
+        <if test="weapon!='' and weapon!='全部'">
+            and weapon = #{weapon}
+        </if>
+        order by characterid desc
+    </select>
+    <select id="getRoleSkills" resultType="com.example.mingchao_boot.Pojo.SkillTraining">
+        select * from skill where roleName = #{characterName}
+    </select>
+</mapper>
